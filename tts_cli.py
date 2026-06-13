@@ -35,14 +35,21 @@ def main() -> int:
     # Stage 1: text -> codes_0.npy
     r1 = subprocess.run(
         [
-            sys.executable, "fish_speech/models/text2semantic/inference.py",
-            "--text", args.text,
-            "--checkpoint-path", str(CKPT),
-            "--device", args.device,
-            "--num-samples", "1",
-            "--output-dir", str(work),
+            sys.executable,
+            "fish_speech/models/text2semantic/inference.py",
+            "--text",
+            args.text,
+            "--checkpoint-path",
+            str(CKPT),
+            "--device",
+            args.device,
+            "--num-samples",
+            "1",
+            "--output-dir",
+            str(work),
         ],
-        cwd=str(REPO), capture_output=True,
+        cwd=str(REPO),
+        capture_output=True,
     )
     codes = work / "codes_0.npy"
     if r1.returncode != 0 or not codes.exists():
@@ -52,13 +59,19 @@ def main() -> int:
     # Stage 2: codes -> wav
     r2 = subprocess.run(
         [
-            sys.executable, "fish_speech/models/dac/inference.py",
-            "-i", str(codes),
-            "-o", args.out,
-            "--checkpoint-path", str(CKPT / "codec.pth"),
-            "--device", args.device,
+            sys.executable,
+            "fish_speech/models/dac/inference.py",
+            "-i",
+            str(codes),
+            "-o",
+            args.out,
+            "--checkpoint-path",
+            str(CKPT / "codec.pth"),
+            "--device",
+            args.device,
         ],
-        cwd=str(REPO), capture_output=True,
+        cwd=str(REPO),
+        capture_output=True,
     )
     if r2.returncode != 0 or not Path(args.out).exists():
         print(r2.stderr.decode(errors="replace")[-600:], file=sys.stderr)
